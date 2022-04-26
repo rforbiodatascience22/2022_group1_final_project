@@ -5,12 +5,20 @@ library(tibble)
 library(stringr)
 library(ggplot2)
 library(RColorBrewer)
+#(patchwork)
+library(ggpubr)
+
+#Open data
+Table_S2_Egge_et_al_2015_jeukmic = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+
+MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
 
 #Data Wrangling: Join add group column to OTUs Table.
 OTU_group = Table_S2_Egge_et_al_2015_jeukmic %>%
   mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
   select(OTU_id, Group)
 
+##Data long
 data = OTU_group %>%
   right_join(MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion,
              by = 'OTU_id') %>% 
@@ -18,12 +26,16 @@ data = OTU_group %>%
   pivot_longer(cols = Sep09:June11,
                names_to = "Month",
                values_to = "Count")
-  
-group_count = data %>% 
-  select(Group, Count) %>% 
-  group_by(Group) %>% 
-  summarise(Count_group = sum(Count))
+               
+##Group HAP-3, HAP-4 and HAP-5 in HAP-3-4-5 group
+##Group Prymnesiales Clade B3/B4 with Prymnesiophyceae
+data = data %>%
+  mutate(Group = str_replace(Group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
+  mutate(Group = str_replace(Group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
+  mutate(Group = str_replace(Group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
+  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
 
+##Count the total counts in each month and join to data
 month_count = data %>% 
   select(Month, Count) %>% 
   group_by(Month) %>% 
@@ -31,22 +43,56 @@ month_count = data %>%
 
 data = data %>%
   right_join(month_count,
-             by = 'Month') %>% 
-  right_join(group_count,
-             by = 'Group')
+             by = 'Month')
+
+##Calculate frequency
 data = data %>% 
   mutate(Frequency = Count / Count_month)
-  
+
+##Split data set in two for plotting
+data_p1 = data %>% 
+  filter(Group %in% c("Chrysochromulinaceae", "Prymnesiaceae")) %>% 
+  select(OTU_id, Month, Group, Frequency)
+
+data_p2 = data %>% 
+  filter(Group %in% c("Calcihaptophycidae", "Phaeocystales", "Clade D", "HAP-3-4-5", "Pavlovales", "Prymnesiophyceae")) %>% 
+  select(OTU_id, Month, Group, Frequency)
+
 #Data visualization:
-data %>% 
+p1 = data_p1 %>% 
   ggplot(aes(x = Month,
              y = OTU_id,
              fill = Frequency)) +
   geom_tile() +
-  scale_fill_distiller(palette = "RdPu") +
-  labs(title = "Figure 5",
-       x = "Months", legend = "Proportional read abundance") +
-theme(axis.text.x = element_text(angle = 90, hjust = 1),
-  axis.title.y = element_blank())
+ scale_fill_gradient2(low = "dodgerblue4",
+                      mid = "darkslategray1",
+                       high = "deepskyblue",
+                       midpoint = 0.5,
+                       name = "Proportional read abundance") +
+                       theme_classic() +
+                       theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12),
+                       axis.title.y = element_blank(),
+                       axis.text.y = element_text(size = 5),
+                       legend.position = "bottom") +
+                       facet_grid(vars(Group))
   
+p2 = data_p2 %>% 
+  ggplot(aes(x = Month,
+             y = OTU_id,
+             fill = Frequency)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "dodgerblue4",
+                       high = "deepskyblue",
+                       mid = "darkslategray1",
+                       midpoint = 0.5,
+                       name = "Proportional read abundance")+
+                       labs(x = "Months", legend = "Proportional read abundance") +
+                       theme_classic() +
+                       theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12),
+                       axis.title.y = element_blank(),
+                       axis.text.y = element_text(size = 5),
+                       legend.position = "bottom") +
+                       facet_grid(vars(Group))
+
+ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
   
