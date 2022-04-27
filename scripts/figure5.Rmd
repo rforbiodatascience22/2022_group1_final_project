@@ -52,15 +52,21 @@ data = data %>%
 
 ##Split data set in two for plotting
 data_p1 = data %>% 
-  filter(Group %in% c("Chrysochromulinaceae", "Prymnesiaceae")) %>% 
+  filter(Group %in% c("Chrysochromulinaceae", "Prymnesiaceae", "Clade D")) %>% 
   select(OTU_id, Month, Group, Frequency)
 
 data_p2 = data %>% 
-  filter(Group %in% c("Calcihaptophycidae", "Phaeocystales", "Clade D", "HAP-3-4-5", "Pavlovales", "Prymnesiophyceae")) %>% 
+  filter(Group %in% c("Calcihaptophycidae", "Phaeocystales", "HAP-3-4-5", "Pavlovales", "Prymnesiophyceae")) %>% 
   select(OTU_id, Month, Group, Frequency)
 
 #Data visualization:
 ##Plot 1
+#Peronalised strip
+perStrip1 = strip_themed(
+#Modify angles of strips
+text_y = elem_list_text(angle = c(270, 0, 270)),
+by_layer_y = "TRUE")
+
 p1 = data_p1 %>% 
   ggplot(aes(x = Month,
              y = OTU_id,
@@ -82,15 +88,21 @@ p1 = data_p1 %>%
                        linetype = 'solid',
                        colour = "white"),
                        strip.text.y = element_text(angle = 270)) +
-                       facet_grid(rows = vars(Group),
-                       scale = "free",
-                       space = "free")
+                       facet_grid2(vars(Group),
+                       scales = "free",
+                       space = "free",
+                       strip = perStrip1) +
+                       scale_x_discrete(limits = c("Sep09", "Oct09",
+                       "Nov09", "Dec09", "Jan10", "Feb10", "Mars10",
+                       "Apr10", "May10", "June10", "Aug10","Sep10",
+                       "Oct10", "Nov10", "Dec10", "Jan11", "Feb11",
+                       "Mars11", "Apr11", "May11", "June11"))
   
 ##Plot 2
 #Peronalised strip
-perStrip = strip_themed(
+perStrip2 = strip_themed(
 #Modify angles of strips
-text_y = elem_list_text(angle = c(270, 0, 270, 0, 270, 270)),
+text_y = elem_list_text(angle = c(270, 270, 0, 270, 270)),
 by_layer_y = "TRUE")
 
 p2 = data_p2 %>% 
@@ -112,8 +124,13 @@ p2 = data_p2 %>%
                        facet_grid2(vars(Group),
                        scales = "free",
                        space = "free",
-                       strip = perStrip)
+                       strip = perStrip2) +
+                       scale_x_discrete(limits = c("Sep09", "Oct09",
+                       "Nov09", "Dec09", "Jan10", "Feb10", "Mars10",
+                       "Apr10", "May10", "June10", "Aug10","Sep10",
+                       "Oct10", "Nov10", "Dec10", "Jan11", "Feb11",
+                       "Mars11", "Apr11", "May11", "June11"))
 
-ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
+heatmap = ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
   
   
