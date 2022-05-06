@@ -9,22 +9,28 @@ library(RColorBrewer)
 #(patchwork)
 library(ggpubr)
 library(ggh4x)
+library(forcats)
 ```
 Open data
 ```{r}
-Table_S2_Egge_et_al_2015_jeukmic = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+Table_S2 = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
 
-MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
+MEC = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
 ```
 Data Wrangling:
 ```{r}
 ##Join add group column to OTUs Table
+<<<<<<< HEAD
 OTU_group = Table_S2_Egge_et_al_2015_jeukmic %>%
+=======
+OTU_group = Table_S2 %>%
+  mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
+>>>>>>> 5272c90dcb1cc6c73f48b11afc2bf34c68d4fecf
   select(OTU_id, Group)
 
 ##Data long
 data = OTU_group %>%
-  right_join(MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion,
+  right_join(MEC,
              by = 'OTU_id') %>% 
   select(!Rownames) %>% 
   pivot_longer(cols = Sep09:June11,
@@ -106,7 +112,7 @@ p1 = data_p1 %>%
                               "Oct10", "Nov10", "Dec10", "Jan11",
                               "Feb11", "Mars11", "Apr11", "May11",
                               "June11")) +
-  labs(y = "OTU")
+  labs(y = "OTU ID")
   
   
 ##Plot 2
@@ -117,29 +123,35 @@ text_y = elem_list_text(angle = c(270, 270, 0, 270, 270)),
 by_layer_y = "TRUE")
 
 p2 = data_p2 %>% 
+  mutate( OTU_id = fct_reorder(OTU_id, Frequency)) %>% 
   ggplot(aes(x = Month,
              y = OTU_id,
-             fill = Frequency)) +
+         fill = Frequency)) +
   geom_tile(colour = "grey") +
-  scale_fill_gradient2(low = "white",
-                       mid = "cornflowerblue",
-                       high = "dodgerblue4",
-                       midpoint = 0.2,
-                       name = "Proportional read abundance")+
-                       labs(x = "Months", legend = "Proportional read abundance") +
-  theme_classic() +
+ scale_fill_gradient2(low = "white",
+                      mid = "cadetblue",
+                      high = "dodgerblue4",
+                      midpoint = 0.35,
+                      name = "Proportional read abundance",
+                      breaks = c(0, 0.2, 0.4, 0.6, 0.8),
+                      limits = c(0, 0.8)) +
+                       theme_classic() +
   theme(axis.text.x = element_text(angle = 90, 
-                                   hjust = 1, 
-                                   size = 9),
-        axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
-        legend.position = "bottom") +
+                                   hjust = 1,
+                                   size = 12),
+        axis.text.y = element_text(size = 12),
+        legend.position = "bottom",
+        panel.grid.minor = element_line(size = 0.3,
+                                        linetype = 'solid',
+                                        colour = "white"),
+        strip.text.y = element_text(angle = 270),
+        axis.title.y = element_blank()) +
   facet_grid2(vars(Group),
               scales = "free",
               space = "free",
               strip = perStrip2) +
   scale_x_discrete(limits = c("Sep09", "Oct09", "Nov09", "Dec09",
-                              "Jan10", "Feb10", "Mars10", "Apr10",
+                              "Jan10", "Feb10", "Mars10", "Apr10", 
                               "May10", "June10", "Aug10","Sep10",
                               "Oct10", "Nov10", "Dec10", "Jan11",
                               "Feb11", "Mars11", "Apr11", "May11",
