@@ -13,9 +13,9 @@ library(forcats)
 ```
 Open data
 ```{r}
-Table_S2 = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+Table_S2 = read_excel("../data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
 
-MEC = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
+MEC = read_excel("../data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
 ```
 Data Wrangling:
 ```{r}
