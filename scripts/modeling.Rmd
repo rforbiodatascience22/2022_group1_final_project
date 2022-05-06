@@ -22,9 +22,7 @@ library(readxl)
 
 ## Load data
 ```{r}
-envDat <- readxl::read_excel("../data/Env_data_mec-14-1145.xlsx") %>% 
-  mutate(across(where(is.character), ~na_if(., "NA"))) %>% 
-  rename(Date = "Date (dd.mm.yy)")
+envDat <- read.csv("data/")
 ```
 
 
