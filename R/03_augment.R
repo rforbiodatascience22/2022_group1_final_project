@@ -143,7 +143,9 @@ temperature_model_data <- envDat %>%
   pivot_longer(cols = -Temp.mean,
                names_to = "parameter",
                values_to = "value") %>% 
-  rename(temperature = Temp.mean)
+  rename(temperature = Temp.mean) %>% 
+  mutate(parameter = str_extract(parameter, 
+                                  pattern = "(\\w+)(?=\\.\\w+)"))
 
 write.csv(temperature_model_data, "data/03_temp_model_dat_aug.csv", 
           row.names = FALSE)
