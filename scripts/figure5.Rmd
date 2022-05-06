@@ -78,8 +78,7 @@ perStrip1 = strip_themed(
 text_y = elem_list_text(angle = c(270, 0, 270)),
 by_layer_y = "TRUE")
 
-p1 = data_p1 %>% 
-  mutate( OTU_id = fct_reorder(OTU_id, Frequency)) %>% 
+p1 = data_p1 %>%
   ggplot(aes(x = Month,
              y = OTU_id,
              fill = Frequency)) +

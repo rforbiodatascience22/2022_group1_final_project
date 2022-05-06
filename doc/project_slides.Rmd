@@ -1,0 +1,33 @@
+---
+title: "Seasonal diversity and dynamics of haptophytes in the Skagerrak, Norway, explored by high-throughput sequencing"
+author: 
+  - Danli Shen (s185387)
+  - Dave E. Rojas Calderon (s212767)
+  - Karolina Krzesinska (s212842)
+  - Mathias Stokholm
+  - Ziyu Zhang (s212657)
+date: '2022-05-06'
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
