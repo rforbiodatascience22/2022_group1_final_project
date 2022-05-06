@@ -121,8 +121,7 @@ perStrip2 = strip_themed(
 text_y = elem_list_text(angle = c(270, 270, 0, 270, 270)),
 by_layer_y = "TRUE")
 
-p2 = data_p2 %>% 
-  mutate( OTU_id = fct_reorder(OTU_id, Frequency)) %>% 
+p2 = data_p2 %>%
   ggplot(aes(x = Month,
              y = OTU_id,
          fill = Frequency)) +
@@ -158,6 +157,7 @@ p2 = data_p2 %>%
 
 #Join plots
 heatmap = ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
+heatmap
 ```
 
   
