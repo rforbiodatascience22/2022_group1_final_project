@@ -9,29 +9,27 @@ library(ggplot2)
 library(RColorBrewer)
 library(readxl)
 
-#(patchwork)
+#(nmdas)
 library(vegan)
-
-#Open data
-Table_S2_Egge_et_al_2015_jeukmic = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
-
-MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
 ```
 
 figure 6.1
 ```{r}
-pc = MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion
+pc = OTU
 pc[pc == 0] <- 0.005
-com = pc[,3:ncol(pc)]
+com = pc[,4:ncol(pc)]
 m_com = as.matrix(com)
 set.seed(123)
 nmds = metaMDS(m_com, k = 2, distance = "bray")
+scores(nmds)
 ```
 
 ```{r}
-nmsites <- scores(nmds)$sites %>% 
+nmscore <- as.data.frame(do.call(rbind, scores(nmds)))
+
+nmsites <- nmscore %>% 
   as.data.frame()
-nmsites <- cbind(nmsites, Table_S2_Egge_et_al_2015_jeukmic$Group)
+nmsites <- cbind(nmsites, OTU_meta$Group)
 names(nmsites)[3] <- 'sites_group'
 
 nmsites <- nmsites %>%
@@ -68,9 +66,8 @@ ggplot() +
 
 figure6.2
 ```{r}
-names(Env_data_mec_14_1145)[1] <- 'Date'
-temp_par = Env_data_mec_14_1145 %>% 
-  select(Date,PAR.avg10, Temp.mean) %>% 
+temp_par = envDat %>% 
+  select(dates,PAR.avg10, Temp.mean) %>% 
   mutate(score = c("0","0","0","0","1","1","1","1","1","0","0",'0','0','0','0','1','1','1','1','1','1'),
          year = c('2009','2009','2009','2009','2010-1','2010-1','2010-1','2010-1','2010-1','2010','2010','2010','2010','2010','2010','2011','2011','2011','2011','2011','2011'),
          # line = factor(rep(c('2019','2010','2011'), each = c(4,11,6))))
