@@ -1,0 +1,71 @@
+library
+```{r}
+library(dplyr)
+library(tidyverse)
+library(tibble)
+library(stringr)
+library(ggplot2)
+library(RColorBrewer)
+library(readxl)
+```
+
+import data 
+```{r}
+Table_S2 = read_excel("/cloud/project/data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+MEC = read_excel("/cloud/project/data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
+```
+
+data wrangling
+```{r}
+##Join add group column to OTUs Table
+OTU_group = Table_S2 %>%
+  mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
+  select(OTU_id, Group)
+
+##Data long
+data = OTU_group %>%
+  right_join(MEC,
+             by = 'OTU_id') %>% 
+  select(!Rownames) %>% 
+  pivot_longer(cols = Sep09:June11,
+               names_to = "Month",
+               values_to = "Count")
+
+#change group names
+data = data %>%
+  mutate(Group = str_replace(Group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
+  mutate(Group = str_replace(Group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
+  mutate(Group = str_replace(Group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
+  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
+
+#plot1
+df <- data%>% 
+  select(c(Month,Count,Group))%>%
+  mutate(Month =ordered(Month, levels = unique(Month)))
+
+p1<-ggplot(data = df, aes(x = Month, y = Count, fill = Group)) + geom_bar(stat = "identity")  + xlab("") + ggtitle("Seasonal variation in proportional read abundance")+xlab("Months")+ylab("Porpotion of reads")+theme(axis.text=element_text(size=5,angle=90))
+p1+scale_fill_brewer(palette = "PiYG")
+
+#for plot 2
+df2 <- df%>% 
+  select(c(Month,Count,Group))%>%
+  mutate(Count = replace(Count, Count > 0, 1))
+
+p2<-ggplot(data = df2, aes(x = Month, y = Count)) + geom_col(aes(fill = Group)) + ggtitle("OTU richness of the major haptophyte groups")+xlab("Months")+ylab("Number of OTUs")+theme(axis.text=element_text(size=5, angle=90))
+p2+scale_fill_brewer(palette = "PiYG")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
