@@ -20,12 +20,8 @@ MEC = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversio
 Data Wrangling:
 ```{r}
 ##Join add group column to OTUs Table
-<<<<<<< HEAD
-OTU_group = Table_S2_Egge_et_al_2015_jeukmic %>%
-=======
 OTU_group = Table_S2 %>%
   mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
->>>>>>> 5272c90dcb1cc6c73f48b11afc2bf34c68d4fecf
   select(OTU_id, Group)
 
 ##Data long
