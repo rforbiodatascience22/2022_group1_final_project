@@ -1,0 +1,96 @@
+
+```{r}
+#Libraries:
+library(dplyr)
+library(tidyverse)
+library(tibble)
+library(stringr)
+library(ggplot2)
+library(RColorBrewer)
+library(readxl)
+
+#(patchwork)
+library(vegan)
+
+#Open data
+Table_S2_Egge_et_al_2015_jeukmic = read_excel("data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+
+MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
+```
+
+figure 6.1
+```{r}
+pc = MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion
+pc[pc == 0] <- 0.005
+com = pc[,3:ncol(pc)]
+m_com = as.matrix(com)
+set.seed(123)
+nmds = metaMDS(m_com, k = 2, distance = "bray")
+```
+
+```{r}
+nmsites <- scores(nmds)$sites %>% 
+  as.data.frame()
+nmsites <- cbind(nmsites, Table_S2_Egge_et_al_2015_jeukmic$Group)
+names(nmsites)[3] <- 'sites_group'
+
+nmsites <- nmsites %>%
+  mutate(sites_group = str_replace(sites_group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
+  mutate(sites_group = str_replace(sites_group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
+  mutate(sites_group = str_replace(sites_group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
+  mutate(sites_group = str_replace(sites_group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
+nmspecies <- scores(nmds)$species %>% 
+  as.data.frame() %>%
+  mutate(oeder = 1:21)
+```
+
+```{r}
+ggplot() + 
+  geom_point(data = nmsites,
+          mapping = aes(x = NMDS1, y = NMDS2,
+                        color = sites_group)) +
+  ggplot2::geom_path(data = nmspecies,
+                     aes(x = NMDS1, y = NMDS2, linetype = "dashed"),
+                     alpha = 0.3,
+                     show.legend = F) +
+  geom_text(data = nmspecies,
+                     aes(x = NMDS1, y = NMDS2, label = row.names(nmspecies)),
+            size = 2.5) +
+  labs(x = 'NMDS1',
+       y = 'NMDS2') +
+  theme_bw() +
+  theme(legend.title=element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", size=1))
+```
+
+
+figure6.2
+```{r}
+names(Env_data_mec_14_1145)[1] <- 'Date'
+temp_par = Env_data_mec_14_1145 %>% 
+  select(Date,PAR.avg10, Temp.mean) %>% 
+  mutate(score = c("0","0","0","0","1","1","1","1","1","0","0",'0','0','0','0','1','1','1','1','1','1'),
+         year = c('2009','2009','2009','2009','2010-1','2010-1','2010-1','2010-1','2010-1','2010','2010','2010','2010','2010','2010','2011','2011','2011','2011','2011','2011'),
+         # line = factor(rep(c('2019','2010','2011'), each = c(4,11,6))))
+         line = c('2009','2009','2009','2009','2010','2010','2010','2010','2010','2010','2010','2010','2010','2010','2010','2011','2011','2011','2011','2011','2011'))
+```
+
+```{r}
+ggplot(temp_par, aes(x = PAR.avg10, y = Temp.mean, linetype = line)) +
+  geom_point(aes(color = score), alpha = 1, show.legend = F) +
+  geom_line(aes(group = year)) +
+  labs(x = expression('Photosynthetically active radiation [mol/m'^2*'/day]'),
+       y = 'Temperature in mixed layer [ °C]') +
+  theme_bw() +
+  theme(legend.title=element_blank(),
+        legend.position = c(.95, .35),
+        legend.justification = c("right", "top"),
+        legend.box.just = "right",
+        legend.margin = margin(6, 6, 6, 6),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", size=1))
+```
+
