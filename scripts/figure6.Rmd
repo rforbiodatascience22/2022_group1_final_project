@@ -15,9 +15,10 @@ library(vegan)
 
 figure 6.1
 ```{r}
-pc = OTU
-pc[pc == 0] <- 0.005
-com = pc[,4:ncol(pc)]
+com = OTU %>% 
+  mutate(across(is.numeric, ~case_when(.==0 ~0.005,
+                                       TRUE ~.))) %>%
+  select(-Rownames, -OTU_id)
 m_com = as.matrix(com)
 set.seed(123)
 nmds = metaMDS(m_com, k = 2, distance = "bray")
@@ -28,17 +29,17 @@ scores(nmds)
 nmscore <- as.data.frame(do.call(rbind, scores(nmds)))
 
 nmsites <- nmscore %>% 
-  as.data.frame()
-nmsites <- cbind(nmsites, OTU_meta$Group)
-names(nmsites)[3] <- 'sites_group'
+  slice(1:156)
+sites_group <- OTU_meta %>% select(Group)
+nmsites <- cbind(nmsites, sites_group)
 
 nmsites <- nmsites %>%
-  mutate(sites_group = str_replace(sites_group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
-  mutate(sites_group = str_replace(sites_group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
-  mutate(sites_group = str_replace(sites_group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
-  mutate(sites_group = str_replace(sites_group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
-nmspecies <- scores(nmds)$species %>% 
-  as.data.frame() %>%
+  mutate(Group = str_replace(Group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
+  mutate(Group = str_replace(Group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
+  mutate(Group = str_replace(Group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
+  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
+nmspecies <- nmscore %>% 
+  slice(157:177) %>%
   mutate(oeder = 1:21)
 ```
 
@@ -46,7 +47,7 @@ nmspecies <- scores(nmds)$species %>%
 ggplot() + 
   geom_point(data = nmsites,
           mapping = aes(x = NMDS1, y = NMDS2,
-                        color = sites_group)) +
+                        color = Group)) +
   ggplot2::geom_path(data = nmspecies,
                      aes(x = NMDS1, y = NMDS2, linetype = "dashed"),
                      alpha = 0.3,
