@@ -20,7 +20,6 @@ Data Wrangling:
 ```{r}
 ##Join add group column to OTUs Table
 OTU_group = Table_S2_Egge_et_al_2015_jeukmic %>%
-  mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
   select(OTU_id, Group)
 
 ##Data long
