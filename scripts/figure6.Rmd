@@ -18,33 +18,6 @@ Table_S2_Egge_et_al_2015_jeukmic = read_excel("data/Table_S2_Egge_et_al_2015_jeu
 MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion = read_excel("data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
 ```
 
-```{r}
-#Data Wrangling: Join add group column to OTUs Table.
-OTU_group = Table_S2_Egge_et_al_2015_jeukmic %>%
-  select(-Previously)
-
-##Data long
-data = OTU_group %>%
-  right_join(MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion,
-             by = 'OTU_id')
-```
-nested table
-
-```{r}
-names(Table_S2_Egge_et_al_2015_jeukmic)[1] <- 'OTU_id'
-OTU_month_nested <- MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion %>%
-  select(-Rownames)%>%
-  pivot_longer(cols = Sep09:June11,
-               names_to = "month",
-               values_to = "count")%>%
-  group_by(OTU_id)%>%
-  nest() %>%
-  ungroup()
-  
-names(OTU_month_nested)[2] <- 'month_count'
-OTU_month_nested
-```
-
 figure 6.1
 ```{r}
 pc = MEC_14_1145_OTUtab_piconanopool_subsamp5553_correctversion
@@ -60,6 +33,12 @@ nmsites <- scores(nmds)$sites %>%
   as.data.frame()
 nmsites <- cbind(nmsites, Table_S2_Egge_et_al_2015_jeukmic$Group)
 names(nmsites)[3] <- 'sites_group'
+
+nmsites <- nmsites %>%
+  mutate(sites_group = str_replace(sites_group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
+  mutate(sites_group = str_replace(sites_group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
+  mutate(sites_group = str_replace(sites_group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
+  mutate(sites_group = str_replace(sites_group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
 nmspecies <- scores(nmds)$species %>% 
   as.data.frame() %>%
   mutate(oeder = 1:21)
