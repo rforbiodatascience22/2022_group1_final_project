@@ -133,7 +133,7 @@ OTU.zeroReplaced = OTU %>%
   select(-OTU_id)
 
 write.csv(OTU.zeroReplaced,
-          file = "data/03_otu_counts_zeroReplaced.csv",
+          file = "data/03_otu_counts_zeroReplaced_aug.csv",
           row.names = FALSE)
 
 #### Data for 08_analysis_v.R ####
