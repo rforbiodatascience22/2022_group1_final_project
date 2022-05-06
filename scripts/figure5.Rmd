@@ -156,7 +156,8 @@ p2 = data_p2 %>%
 
 #Join plots
 heatmap = ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
-heatmap
+#Save plot
+ggsave("figure5", width = 1260, height = 1710)
 ```
 
   
