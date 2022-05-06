@@ -1,4 +1,4 @@
-"OTU id","Percentage of total reads (normalised)","Group","Lowest taxonomic level possible to determine","Best BLAST hit (species and/or environmental clone name)","Acc. No. of best BLAST hit","% match to best BLAST hit","Cultured","Size fraction","Previously"
+"OTU_id","Percentage of total reads (normalised)","Group","Lowest taxonomic level possible to determine","Best BLAST hit (species and/or environmental clone name)","Acc. No. of best BLAST hit","% match to best BLAST hit","Cultured","Size fraction","Previously"
 "OTU 1","12.60%","Calcihaptophycidae","Emiliania huxleyi","Emiliania huxleyi/Gephyrocapsa oceanica","HQ877901.1","99.7%","Yes","Both","Yes"
 "OTU 4","7.30%","Calcihaptophycidae","Clade F","3b-H6","FN690514.1","99.5%","No","Both","--"
 "OTU 9","3.90%","Calcihaptophycidae","Syracosphaera pulchra","Syracosphaera pulchra/Ma130-Pry1-C40","JX680341.1","1","Yes","Both","No"
