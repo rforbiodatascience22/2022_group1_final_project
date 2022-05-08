@@ -15,7 +15,9 @@ models <- model_data %>%
 parameters_vs_temperature <- models  %>% 
   filter(term != "(Intercept)") %>% 
   select(parameter, coefficient = estimate, p.value) %>% 
-  arrange(p.value)
+  arrange(p.value) %>% 
+  mutate(coefficient = round(coefficient, digits = 3),
+         p.value = round(p.value, digits = 3))
 
 write.csv(parameters_vs_temperature,
           file = "results/parameters_vs_temperature.csv",
