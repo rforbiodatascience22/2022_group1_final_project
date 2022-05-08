@@ -33,6 +33,11 @@ envData.filtered <- envDat %>%
          Total.virus = Total.virus / 10000000
          )
 
+envData.filtered %>% envData.filtered %>% 
+  mutate(dates = format(as.Date(dates), 
+                        format="%b%y"))
+
+
 envDat.filtered1 <- envData.filtered %>% 
   select(dates,
          PAR.avg10,

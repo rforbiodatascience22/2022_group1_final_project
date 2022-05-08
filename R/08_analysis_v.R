@@ -7,17 +7,24 @@ models <- model_data %>%
   group_by(parameter) %>% 
   nest() %>% 
   ungroup() %>% 
-  mutate(mdl = map(data, ~lm(value ~ temperature, data = .x))) %>% 
-  mutate(mdl_details = map(mdl, broom::tidy, conf.int = TRUE)) %>% 
+  mutate(mdl = map(data, ~lm(value ~ temperature, 
+                             data = .x))) %>% 
+  mutate(mdl_details = map(mdl, 
+                           broom::tidy, 
+                           conf.int = TRUE)) %>% 
   unnest(mdl_details)
 
 # To see which parameters have a significant dependency on temperature
 parameters_vs_temperature <- models  %>% 
   filter(term != "(Intercept)") %>% 
-  select(parameter, coefficient = estimate, p.value) %>% 
+  select(parameter, 
+         coefficient = estimate, 
+         p.value) %>% 
   arrange(p.value) %>% 
-  mutate(coefficient = round(coefficient, digits = 3),
-         p.value = round(p.value, digits = 3))
+  mutate(coefficient = round(coefficient, 
+                             digits = 3),
+         p.value = round(p.value, 
+                         digits = 3))
 
 write.csv(parameters_vs_temperature,
           file = "results/08_parameters_vs_temperature.csv",
