@@ -50,7 +50,7 @@ p2 <- ggplot(data = df2, aes(x = Month,
                                angle=90))
 p2 <- p2 + scale_fill_brewer(palette = "PiYG")
 
-ggsave("results/04_OTU_richness_of_the_major_haptophyte_groups.png",
+ggsave("results/05_OTU_richness_of_the_major_haptophyte_groups.png",
        plot = p2,
        width = 25,
        height = 12,
