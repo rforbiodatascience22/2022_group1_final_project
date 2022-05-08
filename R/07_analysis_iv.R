@@ -8,7 +8,7 @@ library(RColorBrewer)
 library(ggrepel)
 library(vegan)
 
-#nmdsa data analysis
+#nmds data analysis
 m_com = as.matrix(OTU.zeroReplaced)
 set.seed(123)
 nmds = metaMDS(m_com, k = 2, distance = "bray")
@@ -28,8 +28,8 @@ nmsites <- nmsites %>%
 nmspecies <- nmscore %>% 
   slice(157:177) %>%
   mutate(oeder = 1:21)
-#nmdas plot
-ggplot() + 
+#nmds plot
+p1 <- ggplot() + 
   geom_point(data = nmsites,
              mapping = aes(x = NMDS1, y = NMDS2,
                            color = Group)) +
@@ -48,6 +48,12 @@ ggplot() +
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black", size=1))
 
+ggsave("results/06_nmds.png",
+       plot = p1,
+       width = 20,
+       height = 14,
+       units = "cm")
+
 #annual light–temperature cycle data analysis
 temp_par = envDat %>% 
   select(dates,PAR.avg10, Temp.mean) %>% 
@@ -55,7 +61,7 @@ temp_par = envDat %>%
          year = c('2009','2009','2009','2009','2010','2010','2010','2010','2010','2010','2010','2010','2010','2010','2010','2011','2011','2011','2011','2011','2011'))
 
 #annual light–temperature cycle plot
-ggplot(temp_par, aes(x = PAR.avg10, y = Temp.mean, linetype = year)) +
+p2 <- ggplot(temp_par, aes(x = PAR.avg10, y = Temp.mean, linetype = year)) +
   geom_point(aes(color = year), size = 3, show.legend = F) +
   geom_label_repel(aes(label = month),
                    box.padding   = 0.35, 
@@ -75,5 +81,10 @@ ggplot(temp_par, aes(x = PAR.avg10, y = Temp.mean, linetype = year)) +
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black", size=1))
 
+ggsave("results/06_annual_light_temperature_cycle.png",
+       plot = p2,
+       width = 20,
+       height = 14,
+       units = "cm")
 
-
+rm(list = ls())

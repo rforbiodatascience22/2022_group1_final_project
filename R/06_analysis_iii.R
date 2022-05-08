@@ -1,4 +1,10 @@
-# Dave
+library(tidyverse)
+library(tibble)
+library(RColorBrewer)
+library(ggpubr)
+library(ggh4x)
+library(forcats)
+
 #Open data set
 data = read_csv("./data/03_otu_counts_long_aug.csv")
 
@@ -104,3 +110,9 @@ p2 = data_p2 %>%
 
 #Join plots
 heatmap = ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
+
+ggsave("results/06_heatmap.png",
+       plot = heatmap,
+       width = 30,
+       height = 35,
+       unit = "cm")
