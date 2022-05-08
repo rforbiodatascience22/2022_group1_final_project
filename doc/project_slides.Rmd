@@ -14,17 +14,55 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 ## Introduction
-- Bullet 1
-- Bullet 2
-- Bullet 3
+**Study used:**
+
+Seasonal diversity and dynamics of haptophytes in the
+Skagerrak, Norway, explored by high-throughput
+sequencing
+
+**Purpose:**
+
+To investigate the seasonal variation of environmental factors and bacterial abundances using data visualisation tools
 
 ## Materials and methods
-Flow chart
+```{r, echo=FALSE,out.width="100%", out.height="20%",fig.cap="",fig.show='hold',fig.align='center'}
+knitr::include_graphics("../results/00_flowchart.png")
+```
 
-## Results and discussion
-# Analysis_i
+## Results - Seasonal Variation 1/2
+![](../results/04_analysis_i.png){width=90%}
 
-```{r pressure}
-plot(pressure)
+## Results - Seasonal Variation 2/2
+![](../results/04_analysis_ii.png){width=90%}
+
+## Results - Abundance Analysis
+```{r, echo=FALSE,out.width="65%", out.height="20%",fig.cap="",fig.show='hold',fig.align='center'}
+knitr::include_graphics(c("../results/05_OTU_richness_of_the_major_haptophyte_groups.png","../results/05_Seasonal_variation_in_proportional_read_abundance.png"))
+```
+
+## Results - Heatmaps
+```{r, echo=FALSE,out.width="50%", out.height="20%",fig.cap="",fig.show='hold',fig.align='center'}
+knitr::include_graphics("../results/06_heatmap.png")
+```
+
+## Results - NMDS
+![](../results/07_nmds.png){width=85%}
+
+## Results - Light-Temperature Cycle
+![](../results/07_annual_light_temperature_cycle.png){width=80%}
+
+
+## Result - Modelling
+```{r message = FALSE, warning = FALSE, fig.show='hold',fig.align='center'}
+library(flextable)
+library(tidyverse)
+dat <- read.csv("../results/08_parameters_vs_temperature.csv") %>% t() %>% as.data.frame() %>% 
+  mutate(rownames = c(" ","Coefficient", "P-value")) %>% 
+  relocate(rownames)
+regulartable(dat) %>% delete_part(part = "header")
+```
+
+```{r message = FALSE, warning = FALSE, fig.show='hold',fig.align='center', out.width = "55%"}
+knitr::include_graphics("../results/08_phosphate_vs_temperature.png")
 ```
 
