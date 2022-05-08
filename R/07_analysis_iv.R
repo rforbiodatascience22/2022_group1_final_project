@@ -46,7 +46,7 @@ p1 <- ggplot() +
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black", size=1))
 
-ggsave("results/06_nmds.png",
+ggsave("results/07_nmds.png",
        plot = p1,
        width = 20,
        height = 14,
@@ -79,7 +79,7 @@ p2 <- ggplot(temp_par, aes(x = PAR.avg10, y = Temp.mean, linetype = year)) +
         panel.grid.minor = element_blank(),
         panel.background = element_rect(colour = "black", size=1))
 
-ggsave("results/06_annual_light_temperature_cycle.png",
+ggsave("results/07_annual_light_temperature_cycle.png",
        plot = p2,
        width = 20,
        height = 14,
