@@ -11,3 +11,5 @@ write.csv(OTU, "data/01_otu_counts_load.csv",
 OTU_meta <- read_excel("_raw/Raw_OTU_Meta_Data.xlsx")
 write.csv(OTU_meta, "data/01_otu_meta_load.csv",
           row.names = FALSE)
+
+rm(list = c("envDat", "OTU", "OTU_meta"))

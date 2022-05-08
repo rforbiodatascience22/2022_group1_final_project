@@ -1,66 +1,15 @@
-Libraries:
-```{r}
-library(dplyr)
-library(tidyverse)
-library(tibble)
-library(stringr)
-library(ggplot2)
-library(RColorBrewer)
-#(patchwork)
-library(ggpubr)
-library(ggh4x)
-library(forcats)
-```
-Open data
-```{r}
-Table_S2 = read_excel("../data/Table_S2_Egge_et_al_2015_jeukmic.xlsx")
+# Dave
+#Open data set
+data = read_csv("./data/03_otu_counts_long_aug.csv")
 
-MEC = read_excel("../data/MEC-14-1145-OTUtab_piconanopool_subsamp5553_correctversion.xls")
-```
-Data Wrangling:
-```{r}
-##Join add group column to OTUs Table
-OTU_group = Table_S2 %>%
-  mutate(OTU_id = str_replace(`OTU id`,"OTU\\s", "OTU\\_")) %>% 
-  select(OTU_id, Group)
-
-##Data long
-data = OTU_group %>%
-  right_join(MEC,
-             by = 'OTU_id') %>% 
-  select(!Rownames) %>% 
-  pivot_longer(cols = Sep09:June11,
-               names_to = "Month",
-               values_to = "Count")
-##Group HAP-3, HAP-4 and HAP-5 in HAP-3-4-5 group
-##Group Prymnesiales Clade B3/B4 with Prymnesiophyceae
-data = data %>%
-  mutate(Group = str_replace(Group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
-  mutate(Group = str_replace(Group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
-  mutate(Group = str_replace(Group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
-  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
-##Count the total counts in each month and join to data
-month_count = data %>% 
-  select(Month, Count) %>% 
-  group_by(Month) %>% 
-  summarise(Count_month = sum(Count))
-
-data = data %>%
-  right_join(month_count,
-             by = 'Month')
-
-##Calculate frequency
-data = data %>% 
-  mutate(Frequency = Count / Count_month)
-
-##Order data
+#Order data
 data_ordered = data %>% 
   mutate(OTU_id = str_replace(OTU_id, "OTU\\_", "")) %>% 
   mutate(OTU_id = as.integer(OTU_id)) %>% 
   arrange(OTU_id) %>% 
   mutate(OTU_id = as.factor(OTU_id))
 
-##Split data set in two for plotting
+#Split data set in two for plotting
 data_p1 = data_ordered %>% 
   filter(Group %in% c("Chrysochromulinaceae", "Prymnesiaceae", "Clade D")) %>%
   select(OTU_id, Month, Group, Frequency)
@@ -68,29 +17,28 @@ data_p1 = data_ordered %>%
 data_p2 = data_ordered %>% 
   filter(Group %in% c("Calcihaptophycidae", "Phaeocystales", "HAP-3-4-5", "Pavlovales", "Prymnesiophyceae")) %>% 
   select(OTU_id, Month, Group, Frequency)
-```
-Data visualization
-```{r}
+
+##DATA VISUALIZATION
 ##Plot 1
 #Peronalised strip
 perStrip1 = strip_themed(
-#Modify angles of strips
-text_y = elem_list_text(angle = c(270, 0, 270)),
-by_layer_y = "TRUE")
+  #Modify angles of strips
+  text_y = elem_list_text(angle = c(270, 0, 270)),
+  by_layer_y = "TRUE")
 
 p1 = data_p1 %>%
   ggplot(aes(x = Month,
              y = OTU_id,
              fill = Frequency)) +
   geom_tile(colour = "grey") +
- scale_fill_gradient2(low = "white",
-                      mid = "cadetblue",
-                      high = "dodgerblue4",
-                      midpoint = 0.35,
-                      name = "Proportional read abundance",
-                      breaks = c(0, 0.2, 0.4, 0.6, 0.8),
-                      limits= c(0 ,0.8)) +
-                       theme_classic() +
+  scale_fill_gradient2(low = "white",
+                       mid = "cadetblue",
+                       high = "dodgerblue4",
+                       midpoint = 0.35,
+                       name = "Proportional read abundance",
+                       breaks = c(0, 0.2, 0.4, 0.6, 0.8),
+                       limits= c(0 ,0.8)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90, 
                                    hjust = 1,
                                    size = 12),
@@ -111,28 +59,28 @@ p1 = data_p1 %>%
                               "Feb11", "Mars11", "Apr11", "May11",
                               "June11")) +
   labs(y = "OTU ID")
-  
-  
+
+
 ##Plot 2
 #Peronalised strip
 perStrip2 = strip_themed(
-#Modify angles of strips
-text_y = elem_list_text(angle = c(270, 270, 0, 270, 270)),
-by_layer_y = "TRUE")
+  #Modify angles of strips
+  text_y = elem_list_text(angle = c(270, 270, 0, 270, 270)),
+  by_layer_y = "TRUE")
 
 p2 = data_p2 %>%
   ggplot(aes(x = Month,
              y = OTU_id,
-         fill = Frequency)) +
+             fill = Frequency)) +
   geom_tile(colour = "grey") +
- scale_fill_gradient2(low = "white",
-                      mid = "cadetblue",
-                      high = "dodgerblue4",
-                      midpoint = 0.35,
-                      name = "Proportional read abundance",
-                      breaks = c(0, 0.2, 0.4, 0.6, 0.8),
-                      limits = c(0, 0.8)) +
-                       theme_classic() +
+  scale_fill_gradient2(low = "white",
+                       mid = "cadetblue",
+                       high = "dodgerblue4",
+                       midpoint = 0.35,
+                       name = "Proportional read abundance",
+                       breaks = c(0, 0.2, 0.4, 0.6, 0.8),
+                       limits = c(0, 0.8)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90, 
                                    hjust = 1,
                                    size = 12),
@@ -156,9 +104,3 @@ p2 = data_p2 %>%
 
 #Join plots
 heatmap = ggarrange(p1, p2, ncol=2, common.legend = TRUE, legend="bottom")
-#Save plot
-ggsave("figure5", width = 1260, height = 1710)
-```
-
-  
-  
