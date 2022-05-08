@@ -2,8 +2,6 @@
 #Libraries:
 library(tidyverse)
 library(tibble)
-library(stringr)
-library(ggplot2)
 library(RColorBrewer)
 library(ggrepel)
 library(vegan)
