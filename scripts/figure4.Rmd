@@ -36,7 +36,7 @@ data = data %>%
   mutate(Group = str_replace(Group, "Haptophyta[\\s\\S]+", "HAP\\-4")) %>% 
   mutate(Group = str_replace(Group, "HAP\\-[345]", "HAP\\-3\\-4\\-5")) %>% 
   mutate(Group = str_replace(Group, "Prymnesiales[\\s\\S]+", "Prymnesiophyceae")) %>%
-  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae"))
+  mutate(Group = str_replace(Group, "Prymnesiophyceae[\\s\\S]+", "Prymnesiophyceae")) 
 
 #plot1
 df <- data%>% 
@@ -50,10 +50,12 @@ p1+scale_fill_brewer(palette = "PiYG")
 df2 <- df%>% 
   select(c(Month,Count,Group))%>%
   mutate(Count = replace(Count, Count > 0, 1))
+view(df)
 
 p2<-ggplot(data = df2, aes(x = Month, y = Count)) + geom_col(aes(fill = Group)) + ggtitle("OTU richness of the major haptophyte groups")+xlab("Months")+ylab("Number of OTUs")+theme(axis.text=element_text(size=5, angle=90))
 p2+scale_fill_brewer(palette = "PiYG")
 
+#ggsave
 
 ```
 
