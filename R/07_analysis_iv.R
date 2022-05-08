@@ -7,6 +7,9 @@ library(ggrepel)
 library(vegan)
 
 #nmds data analysis
+OTU.zeroReplaced <- read.csv("data/03_otu_counts_zeroReplaced_aug.csv")
+OTU_meta <- read.csv("data/02_otu_meta_clean.csv")
+envDat <- read.csv("data/02_env_clean.csv")
 m_com = as.matrix(OTU.zeroReplaced)
 set.seed(123)
 nmds = metaMDS(m_com, k = 2, distance = "bray")
