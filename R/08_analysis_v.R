@@ -20,7 +20,7 @@ parameters_vs_temperature <- models  %>%
          p.value = round(p.value, digits = 3))
 
 write.csv(parameters_vs_temperature,
-          file = "results/parameters_vs_temperature.csv",
+          file = "results/08_parameters_vs_temperature.csv",
           row.names = FALSE)
 
 phos_vs_temp.data <- model_data %>% 
@@ -76,7 +76,7 @@ p <- ggplot(data = phos_vs_temp.data,
        subtitle = "Averaged over the mixed layer") +
   theme_classic()
 
-ggsave("results/phosphate_vs_temperature.png",
+ggsave("results/08_phosphate_vs_temperature.png",
        plot = p,
        width = 20,
        height = 14,
