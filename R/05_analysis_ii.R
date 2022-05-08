@@ -23,9 +23,9 @@ p1 <- ggplot(data = df, aes(x = Month,
     ylab("Porpotion of reads") +
     theme(axis.text=element_text(size=8,
                                  angle=90))
-p1 + scale_fill_brewer(palette = "PiYG")
+p1 <- p1 + scale_fill_brewer(palette = "PiYG")
 
-ggsave("results/Seasonal variation in proportional read abundance.png",
+ggsave("results/05_Seasonal_variation_in_proportional_read_abundance.png",
        plot = p1,
        width = 25,
        height = 12,
@@ -48,9 +48,9 @@ p2 <- ggplot(data = df2, aes(x = Month,
   ylab("Number of OTUs") +
   theme(axis.text=element_text(size=8, 
                                angle=90))
-p2 + scale_fill_brewer(palette = "PiYG")
+p2 <- p2 + scale_fill_brewer(palette = "PiYG")
 
-ggsave("results/OTU richness of the major haptophyte groups.png",
+ggsave("results/04_OTU_richness_of_the_major_haptophyte_groups.png",
        plot = p2,
        width = 25,
        height = 12,
